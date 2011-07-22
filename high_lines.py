@@ -6,7 +6,7 @@
 
 import weechat,re
 
-weechat.register("high_lines", "Banton", "0.0.1", "GPL", "high_lines:Highlight entire line", "", "")
+weechat.register("high_lines", "Banton", "0.0.2", "GPL", "high_lines:Highlight entire line", "", "")
 
 def modify(data, signal, signal_data, string):
     if not "irc_privmsg" in signal_data:
@@ -16,10 +16,10 @@ def modify(data, signal, signal_data, string):
     server = list[1].split(".")
     msg = string.split("\t")
     nick = weechat.info_get("irc_nick", server[0])
-    highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
+    #highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
     if nick in msg[1]:
         weechat.string_remove_color(string, "")
-        return "%s\t%s%s" % (msg[0], weechat.color(highcolor), msg[1])
+        return "%s\t%s%s" % (msg[0], weechat.color('chat_highlight'), msg[1])
     return string 
     
 
