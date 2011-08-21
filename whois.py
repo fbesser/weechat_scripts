@@ -27,7 +27,9 @@ SCRIPT_NAME = "whois"
 SCRIPT_AUTHOR = "Banton"
 SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
-SCRIPT_DESC = "Basic Calculator for Weechat"
+SCRIPT_DESC = "whois via mouse in chat area"
+
+keys = { "@chat:w": "hsignal: chat_whois" }
 
 def whois_hsignal(data, signa, myhash):
     whois = "/whois %s" % myhash["_chat_line_nick"]
@@ -36,6 +38,8 @@ def whois_hsignal(data, signa, myhash):
 
 weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE,
 SCRIPT_DESC, "", "")
+
+weechat.key_bind("cursor", keys)
 
 weechat.hook_hsignal("chat_whois", "whois_hsignal", "")
 
