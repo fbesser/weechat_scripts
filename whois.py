@@ -29,9 +29,12 @@ SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "whois via mouse in chat area"
 
-keys = { "@chat:w": "hsignal: chat_whois" }
+keys = { "@chat(irc.*):w": "hsignal:chat_whois;/cursor stop" }
 
 def whois_hsignal(data, signa, myhash):
+    if not myhash["_chat_line_nick"]:
+        return weechat.WEECHAT_RC_OK
+
     whois = "/whois %s" % myhash["_chat_line_nick"]
     weechat.command(myhash["_buffer_name"], whois)
     return weechat.WEECHAT_RC_OK
