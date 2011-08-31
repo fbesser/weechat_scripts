@@ -40,8 +40,8 @@ def modify(data, signal, signal_data, string):
     #highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
     if nick in msg:
         weechat.string_remove_color(string, "")
-        return "%s\t%s%s%s" % (prefix, weechat.color('chat_highlight'), msg, signal_data)
-    return "%s   %s " % (string, signal_data) 
+        return "%s\t%s%s" % (prefix, weechat.color('chat_highlight'), msg)
+    return string 
     
 
 
