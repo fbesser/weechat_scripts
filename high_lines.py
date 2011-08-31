@@ -32,17 +32,16 @@ weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCR
 
 def modify(data, signal, signal_data, string):
     if not "irc_privmsg" in signal_data:
-
         return string
     plugin, buffer_name, tags = signal_data.split(";")
-    server, channel = buffer_name.split(".")
+    server, channel = buffer_name.split(".", 1)
     prefix, msg = string.split("\t")
     nick = weechat.info_get("irc_nick", server)
     #highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
     if nick in msg:
         weechat.string_remove_color(string, "")
-        return "%s\t%s%s" % (prefix, weechat.color('chat_highlight'), msg)
-    return string 
+        return "%s\t%s%s%s" % (prefix, weechat.color('chat_highlight'), msg, signal_data)
+    return "%s   %s " % (string, signal_data) 
     
 
 
