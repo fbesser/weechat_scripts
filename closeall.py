@@ -59,4 +59,8 @@ if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, 
     for option, default_value in settings.iteritems():
         if not weechat.config_is_set_plugin(option):
             weechat.config_set_plugin(option, default_value)
-    weechat.hook_command('closeall', SCRIPT_DESC, 'query', '', '', 'closeall_command_cb', '')
+    weechat.hook_command('closeall', SCRIPT_DESC,
+                         'query || [plugin]', 
+                         ' query: closes all IRC query buffer\n'
+                         'plugin: closes all buffers of given plugin\n',
+                         '', 'closeall_command_cb', '')
