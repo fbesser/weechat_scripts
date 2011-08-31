@@ -30,7 +30,7 @@ SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "Closes all buffers that don't start with a certain char"
 
 settings = {
-        "channel_prefix"           : "#&",
+        "channel_prefix"           : "#,&",
 }
 def closeall_query():
     """ Closes all IRC Buffers which do not start with channel_prefix """
