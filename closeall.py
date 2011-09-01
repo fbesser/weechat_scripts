@@ -27,10 +27,14 @@ SCRIPT_NAME = "closeall"
 SCRIPT_AUTHOR = "florianb"
 SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
-SCRIPT_DESC = "Closes all buffers that don't start with a certain char"
+SCRIPT_DESC = "Closes all query/plugin buffers"
 
 settings = {
         "channel_prefix"           : "#,&",
+}
+
+description = {
+        "channel_prefix"           : "Set to Channel prefixes you want not to close on /close query [default: #,&]",
 }
 
 def closeall_plugin(pluginname):
@@ -70,10 +74,17 @@ def closeall_command_cb(data, buffer, args):
     return weechat.WEECHAT_RC_OK
 
 if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
-    
+
+    # Set config options if not set
     for option, default_value in settings.iteritems():
         if not weechat.config_is_set_plugin(option):
             weechat.config_set_plugin(option, default_value)
+    # Set description to options if weechat >= 0.3.5
+    version = weechat.info_get("version_number", "") or 0
+    if int(version) >= 0x00030500:
+        for desc, desc_value in description.iteritems():
+            weechat.config_set_desc_plugin(desc, desc_value)
+
     weechat.hook_command('closeall', SCRIPT_DESC,
                          'query || plugin <plugin name>',
                          '               query: closes all IRC query buffer\n'
