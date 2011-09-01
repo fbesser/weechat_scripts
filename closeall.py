@@ -32,6 +32,20 @@ SCRIPT_DESC = "Closes all buffers that don't start with a certain char"
 settings = {
         "channel_prefix"           : "#,&",
 }
+
+def closeall_plugin(pluginname):
+    """ Closes all Buffers of a Plugin Type """
+
+    infolist = weechat.infolist_get("buffer", "", "")
+
+    while weechat.infolist_next(infolist):
+        if weechat.infolist_string(infolist, "plugin_name") == pluginname:
+            if not weechat.infolist_string(infolist, "name") == "weechat":
+                weechat.command('', '/buffer close %s.%s' % (pluginname,
+                    weechat.infolist_string(infolist, "name")))
+    weechat.infolist_free(infolist)
+    return weechat.WEECHAT_RC_OK
+
 def closeall_query():
     """ Closes all IRC Buffers which do not start with channel_prefix """
 
@@ -51,7 +65,8 @@ def closeall_command_cb(data, buffer, args):
     argv = args.strip().split(" ", 1)
     if argv[0] == "query":
         closeall_query()
-
+    if argv[0] == "plugin":
+        closeall_plugin(argv[1])
     return weechat.WEECHAT_RC_OK
 
 if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
@@ -60,7 +75,7 @@ if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, 
         if not weechat.config_is_set_plugin(option):
             weechat.config_set_plugin(option, default_value)
     weechat.hook_command('closeall', SCRIPT_DESC,
-                         'query || [plugin]', 
-                         ' query: closes all IRC query buffer\n'
-                         'plugin: closes all buffers of given plugin\n',
+                         'query || plugin <plugin name>',
+                         '               query: closes all IRC query buffer\n'
+                         'plugin <plugin name>: closes all buffers of given plugin\n',
                          '', 'closeall_command_cb', '')
