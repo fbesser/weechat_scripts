@@ -30,7 +30,7 @@ SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "Closes all query/plugin buffers"
 
 settings = {
-        "channel_prefix"           : "#,&",
+        "channel_prefix": "#,&",
 }
 
 description = {
@@ -45,8 +45,9 @@ def closeall_plugin(pluginname):
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == pluginname:
             if not weechat.infolist_string(infolist, "name") == "weechat":
-                weechat.command('', '/buffer close %s.%s' % (pluginname,
-                    weechat.infolist_string(infolist, "name")))
+                weechat.command('', '/buffer close %s.%s' %
+                               (pluginname,
+                                weechat.infolist_string(infolist, "name")))
     weechat.infolist_free(infolist)
     return weechat.WEECHAT_RC_OK
 
@@ -73,7 +74,8 @@ def closeall_command_cb(data, buffer, args):
         closeall_plugin(argv[1])
     return weechat.WEECHAT_RC_OK
 
-if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
+if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE,
+                    SCRIPT_DESC, "", ""):
 
     # Set config options if not set
     for option, default_value in settings.iteritems():
