@@ -44,12 +44,8 @@ except ImportError, message:
     print('Missing package(s) for %s: %s' % (SCRIPT_NAME, message))
     import_ok = False
 
-settings = {
-        "channel_prefix": "#,&,*",
-}
-
 def allquery_command_cb(data, buffer, args):
-
+    """ Callback for /allquery command """
     if args == "":
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
         return weechat.WEECHAT_RC_OK
@@ -57,9 +53,10 @@ def allquery_command_cb(data, buffer, args):
     infolist = weechat.infolist_get("buffer", "", "")
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == "irc":
-            pref = tuple(weechat.config_get_plugin("channel_prefix").split(","))
             server, query = weechat.infolist_string(infolist, "name").split(".", 1)
-            if not query.startswith(pref) and server != "server":
+            if weechat.buffer_get_string(
+                    weechat.infolist_pointer(infolist, "pointer"),
+                    "localvar_type") == "private":
                 comm = re.sub(r'\$nick', query, args)
                 weechat.command(weechat.infolist_pointer(infolist, "pointer"), comm)
     weechat.infolist_free(infolist)
