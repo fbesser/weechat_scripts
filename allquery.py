@@ -65,9 +65,6 @@ def allquery_command_cb(data, buffer, args):
 if __name__ == '__main__' and import_ok:
     if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION,
                         SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
-        for option, default_value in settings.iteritems():
-            if not weechat.config_is_set_plugin(option):
-                weechat.config_set_plugin(option, default_value)
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
                              'command',
