@@ -27,6 +27,8 @@ SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "Script Description"
 
+SCRIPT_COMMAND = "script command"
+
 import_ok = True
 
 try:
