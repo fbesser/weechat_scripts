@@ -46,10 +46,21 @@ except ImportError, message:
 
 def allquery_command_cb(data, buffer, args):
     """ Callback for /allquery command """
+    
+    args = args.strip()
     if args == "":
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
         return weechat.WEECHAT_RC_OK
-
+    argv = args.split(" ")
+    exe_server = ""
+    if argv[0] == "-server":
+        exe_server = argv[1]
+        command = " ".join(argv[2::])
+        #weechat.prnt('', command)
+        #return weechat.WEECHAT_RC_OK
+    else:
+        command = args
+    
     infolist = weechat.infolist_get("buffer", "", "")
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == "irc":
@@ -57,8 +68,13 @@ def allquery_command_cb(data, buffer, args):
             if weechat.buffer_get_string(
                     weechat.infolist_pointer(infolist, "pointer"),
                     "localvar_type") == "private":
-                comm = re.sub(r'\$nick', query, args)
-                weechat.command(weechat.infolist_pointer(infolist, "pointer"), comm)
+                if exe_server is not None:
+                    if server == exe_server:
+                        #comm = re.sub(r'\$nick', query, args)
+                        weechat.command(weechat.infolist_pointer(infolist, "pointer"), command)
+                else:
+                    comm = re.sub(r'\$nick', query, args)
+                    weechat.command(weechat.infolist_pointer(infolist, "pointer"), comm)
     weechat.infolist_free(infolist)
     return weechat.WEECHAT_RC_OK
 
@@ -67,7 +83,7 @@ if __name__ == '__main__' and import_ok:
                         SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
-                             'command',
+                             '[-server <server>] command <arguments>',
                              '   command: command executed in query buffers\n'
                              '     $nick: gets replaced by query buffer nick\n\n'
                              'Examples:\n'
@@ -77,4 +93,5 @@ if __name__ == '__main__' and import_ok:
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /notice $nick Hello',
-                             '', 'allquery_command_cb', '')
+                             '/%(commands)',
+                             'allquery_command_cb', '')
