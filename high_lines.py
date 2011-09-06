@@ -35,7 +35,7 @@ def modify(data, signal, signal_data, string):
         return string
     plugin, buffer_name, tags = signal_data.split(";")
     server, channel = buffer_name.split(".", 1)
-    prefix, msg = string.split("\t")
+    prefix, msg = string.split("\t", 1)
     nick = weechat.info_get("irc_nick", server)
     #highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
     if nick in msg:

@@ -17,9 +17,14 @@
 #
 
 #
+#
+# History:
+# 2011-09-05, Florian Besser <fbesser@gmail.com>:
+#     version 0.1: script created
+#
 # (this script requires WeeChat 0.3.0 or newer)
 #
-#
+
 
 SCRIPT_NAME = "allquery"
 SCRIPT_AUTHOR = "florianb"
@@ -52,29 +57,25 @@ def allquery_command_cb(data, buffer, args):
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
         return weechat.WEECHAT_RC_OK
     argv = args.split(" ")
-    exe_server = ""
+    exe_server = None
     if argv[0] == "-server":
         exe_server = argv[1]
         command = " ".join(argv[2::])
-        #weechat.prnt('', command)
-        #return weechat.WEECHAT_RC_OK
     else:
         command = args
     
     infolist = weechat.infolist_get("buffer", "", "")
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == "irc":
+            ptr = weechat.infolist_pointer(infolist, "pointer")
             server, query = weechat.infolist_string(infolist, "name").split(".", 1)
-            if weechat.buffer_get_string(
-                    weechat.infolist_pointer(infolist, "pointer"),
-                    "localvar_type") == "private":
+            if weechat.buffer_get_string(ptr, "localvar_type") == "private":
+                command = re.sub(r'\$nick', query, command)
                 if exe_server is not None:
                     if server == exe_server:
-                        #comm = re.sub(r'\$nick', query, args)
-                        weechat.command(weechat.infolist_pointer(infolist, "pointer"), command)
+                        weechat.command(ptr, command)
                 else:
-                    comm = re.sub(r'\$nick', query, args)
-                    weechat.command(weechat.infolist_pointer(infolist, "pointer"), comm)
+                    weechat.command(ptr, command)
     weechat.infolist_free(infolist)
     return weechat.WEECHAT_RC_OK
 
@@ -84,8 +85,9 @@ if __name__ == '__main__' and import_ok:
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
                              '[-server <server>] command <arguments>',
-                             '   command: command executed in query buffers\n'
-                             '     $nick: gets replaced by query buffer nick\n\n'
+                             '-server <server>: only execute command on querys of a given server\n'
+                             '         command: command executed in query buffers\n'
+                             '           $nick: gets replaced by query buffer nick\n\n'
                              'Examples:\n'
                              '  close all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /buffer close\n'
@@ -93,5 +95,5 @@ if __name__ == '__main__' and import_ok:
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /notice $nick Hello',
-                             '/%(commands)',
+                             '-server %(irc_servers)',
                              'allquery_command_cb', '')
