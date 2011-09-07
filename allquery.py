@@ -49,6 +49,15 @@ except ImportError, message:
     print('Missing package(s) for %s: %s' % (SCRIPT_NAME, message))
     import_ok = False
 
+
+def make_list(argument):
+    """ Make a list out of argument string of format -argument=value0,value1"""
+    arglist = argument.split("=", 1)
+    arguments = arglist[1].split(",")
+    return arguments
+
+def check_server(serverdata):
+    return
 def allquery_command_cb(data, buffer, args):
     """ Callback for /allquery command """
     
@@ -57,13 +66,22 @@ def allquery_command_cb(data, buffer, args):
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
         return weechat.WEECHAT_RC_OK
     argv = args.split(" ")
-    exe_server = None
-    if argv[0] == "-server":
-        exe_server = argv[1]
-        command = " ".join(argv[2::])
+    execute_server = None
+    exclude_nick = None
+    if argv[0].startswith("-server="):
+        execute_server = make_list(argv[0])
+        if argv[1].startswith("-exclude="):
+            exclude_nick = make_list(argv[1])
+            command = " ".join(argv[2::])
+        else:
+            command = " ".join(argv[1::])
+    elif argv[0].startswith("-exclude="):
+        #exclude nicks
+        exclude_nick = make_list(argv[0])
+        command = " ".join(argv[1::])
     else:
         command = args
-    
+
     infolist = weechat.infolist_get("buffer", "", "")
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == "irc":
@@ -71,9 +89,12 @@ def allquery_command_cb(data, buffer, args):
             server, query = weechat.infolist_string(infolist, "name").split(".", 1)
             if weechat.buffer_get_string(ptr, "localvar_type") == "private":
                 command = re.sub(r'\$nick', query, command)
-                if exe_server is not None:
-                    if server == exe_server:
-                        weechat.command(ptr, command)
+                if execute_server is not None:
+                    if server in execute_server:
+                        weechat.prnt(ptr, command)
+                elif exclude_nick is not None:
+                    if not query in exclude_nick:
+                        weechat.prnt(ptr, command)
                 else:
                     weechat.command(ptr, command)
     weechat.infolist_free(infolist)
@@ -84,8 +105,9 @@ if __name__ == '__main__' and import_ok:
                         SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
-                             '[-server <server>] command <arguments>',
+                             '[-server <server>] [-exclude=<nick>,[<nick2>...]] command <arguments>',
                              '-server <server>: only execute command on querys of a given server\n'
+                             '        -exclude: exclude some nicks from executed command\n'
                              '         command: command executed in query buffers\n'
                              '           $nick: gets replaced by query buffer nick\n\n'
                              'Examples:\n'
