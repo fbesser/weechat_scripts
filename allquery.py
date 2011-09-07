@@ -56,8 +56,6 @@ def make_list(argument):
     arguments = arglist[1].split(",")
     return arguments
 
-def check_server(serverdata):
-    return
 def allquery_command_cb(data, buffer, args):
     """ Callback for /allquery command """
     
@@ -66,17 +64,10 @@ def allquery_command_cb(data, buffer, args):
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
         return weechat.WEECHAT_RC_OK
     argv = args.split(" ")
-    execute_server = None
+
     exclude_nick = None
-    if argv[0].startswith("-server="):
-        execute_server = make_list(argv[0])
-        if argv[1].startswith("-exclude="):
-            exclude_nick = make_list(argv[1])
-            command = " ".join(argv[2::])
-        else:
-            command = " ".join(argv[1::])
-    elif argv[0].startswith("-exclude="):
-        #exclude nicks
+
+    if argv[0].startswith("-exclude="):
         exclude_nick = make_list(argv[0])
         command = " ".join(argv[1::])
     else:
@@ -89,10 +80,7 @@ def allquery_command_cb(data, buffer, args):
             server, query = weechat.infolist_string(infolist, "name").split(".", 1)
             if weechat.buffer_get_string(ptr, "localvar_type") == "private":
                 command = re.sub(r'\$nick', query, command)
-                if execute_server is not None:
-                    if server in execute_server:
-                        weechat.command(ptr, command)
-                elif exclude_nick is not None:
+                if exclude_nick is not None:
                     if not query in exclude_nick:
                         weechat.command(ptr, command)
                 else:
@@ -105,8 +93,7 @@ if __name__ == '__main__' and import_ok:
                         SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
-                             '[-server <server>] [-exclude=<nick>,[<nick2>...]] command <arguments>',
-                             '-server <server>: only execute command on querys of a given server\n'
+                             '[-exclude=<nick>,[<nick2>...]] command <arguments>',
                              '        -exclude: exclude some nicks from executed command\n'
                              '         command: command executed in query buffers\n'
                              '           $nick: gets replaced by query buffer nick\n\n'
@@ -117,5 +104,4 @@ if __name__ == '__main__' and import_ok:
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /notice $nick Hello',
-                             '-server= %(irc_servers)',
                              'allquery_command_cb', '')
