@@ -16,7 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#
+# SCRIPT IS BEING DEVELOPED 
+# USE: allquery.py
 # (this script requires WeeChat 0.3.0 or newer)
 #
 #
