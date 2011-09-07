@@ -91,10 +91,10 @@ def allquery_command_cb(data, buffer, args):
                 command = re.sub(r'\$nick', query, command)
                 if execute_server is not None:
                     if server in execute_server:
-                        weechat.prnt(ptr, command)
+                        weechat.command(ptr, command)
                 elif exclude_nick is not None:
                     if not query in exclude_nick:
-                        weechat.prnt(ptr, command)
+                        weechat.command(ptr, command)
                 else:
                     weechat.command(ptr, command)
     weechat.infolist_free(infolist)
@@ -117,5 +117,5 @@ if __name__ == '__main__' and import_ok:
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /notice $nick Hello',
-                             '-server %(irc_servers)',
+                             '-server= %(irc_servers)',
                              'allquery_command_cb', '')
