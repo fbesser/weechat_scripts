@@ -19,7 +19,8 @@
 #
 # (this script requires WeeChat 0.3.6 or newer)
 #
-# Quick hack, to get to know hsignals 
+# Quick hack, to get to know hsignals
+# THIS SCRIPT HAS NO USE AT ALL!!! 
 
 import weechat
 
