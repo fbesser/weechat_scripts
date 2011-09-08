@@ -103,4 +103,5 @@ if __name__ == '__main__' and import_ok:
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /notice $nick Hello',
+                             '',
                              'allquery_command_cb', '')
