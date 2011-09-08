@@ -76,14 +76,17 @@ def allquery_command_cb(data, buffer, args):
     while weechat.infolist_next(infolist):
         if weechat.infolist_string(infolist, "plugin_name") == "irc":
             ptr = weechat.infolist_pointer(infolist, "pointer")
-            server, query = weechat.infolist_string(infolist, "name").split(".", 1)
+            server = weechat.buffer_get_string(ptr, "localvar_server")
+            query = weechat.buffer_get_string(ptr, "localvar_channel")
+            execute_command = re.sub(r'\$nick', query, command)
             if weechat.buffer_get_string(ptr, "localvar_type") == "private":
-                command = re.sub(r'\$nick', query, command)
+
+                weechat.prnt('', command)
                 if exclude_nick is not None:
                     if not query in exclude_nick:
-                        weechat.command(ptr, command)
+                        weechat.command(ptr, execute_command)
                 else:
-                    weechat.command(ptr, command)
+                    weechat.command(ptr, execute_command)
     weechat.infolist_free(infolist)
     return weechat.WEECHAT_RC_OK
 
