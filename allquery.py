@@ -71,6 +71,9 @@ def allquery_command_cb(data, buffer, args):
         command = " ".join(argv[1::])
     else:
         command = args
+    if not command.startswith("/"):
+        weechat.command("", "/help %s" % SCRIPT_COMMAND)
+        return weechat.WEECHAT_RC_OK
 
     infolist = weechat.infolist_get("buffer", "", "")
     while weechat.infolist_next(infolist):
@@ -80,8 +83,6 @@ def allquery_command_cb(data, buffer, args):
             query = weechat.buffer_get_string(ptr, "localvar_channel")
             execute_command = re.sub(r'\$nick', query, command)
             if weechat.buffer_get_string(ptr, "localvar_type") == "private":
-
-                weechat.prnt('', command)
                 if exclude_nick is not None:
                     if not query in exclude_nick:
                         weechat.command(ptr, execute_command)
@@ -96,7 +97,7 @@ if __name__ == '__main__' and import_ok:
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
                              '[-exclude=<nick>,[<nick2>...]] command <arguments>',
-                             '        -exclude: exclude some nicks from executed command\n'
+                             '   -exclude=nick: exclude some nicks from executed command\n'
                              '         command: command executed in query buffers\n'
                              '           $nick: gets replaced by query buffer nick\n\n'
                              'Examples:\n'
