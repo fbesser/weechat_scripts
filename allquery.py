@@ -58,7 +58,6 @@ def make_list(argument):
 
 def allquery_command_cb(data, buffer, args):
     """ Callback for /allquery command """
-    
     args = args.strip()
     if args == "":
         weechat.command("", "/help %s" % SCRIPT_COMMAND)
