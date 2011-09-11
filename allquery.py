@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2011 by Florian Besser <fbesser@gmail.com>
+# Copyright (c) 2011 by F. Besser <fbesser@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #
 #
 # History:
-# 2011-09-05, Florian Besser <fbesser@gmail.com>:
+# 2011-09-05, F. Besser <fbesser@gmail.com>:
 #     version 0.1: script created
 #
 # (this script requires WeeChat 0.3.0 or newer)
@@ -27,7 +27,7 @@
 
 
 SCRIPT_NAME = "allquery"
-SCRIPT_AUTHOR = "florianb"
+SCRIPT_AUTHOR = "fbesser"
 SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "Executes command on all irc query buffer"
