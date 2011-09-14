@@ -97,12 +97,14 @@ if __name__ == '__main__' and import_ok:
 
         weechat.hook_command(SCRIPT_COMMAND, SCRIPT_DESC,
                              '[-exclude=<nick>,[<nick2>...]] command <arguments>',
-                             '   -exclude=nick: exclude some nicks from executed command\n'
-                             '         command: command executed in query buffers\n'
-                             '           $nick: gets replaced by query buffer nick\n\n'
+                             '   -exclude=nick1,...: exclude some querys from executed command\n'
+                             '              command: command executed in query buffers\n'
+                             '                $nick: gets replaced by query buffer nick\n\n'
                              'Examples:\n'
                              '  close all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /buffer close\n'
+                             '  close all query buffers, but don\'t close FlashCode:\n'
+                             '    /' + SCRIPT_COMMAND + ' -exclude=FlashCode /buffer close\n'
                              '  msg to all query buffers:\n'
                              '    /' + SCRIPT_COMMAND + ' /say Hello\n'
                              '  notice to all query buffers:\n'
