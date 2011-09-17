@@ -27,7 +27,6 @@ SCRIPT_VERSION = "0.1"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "high_lines:Highlight entire line"
 
-weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", "")
 
 
 def modify(data, signal, signal_data, string):
@@ -38,11 +37,13 @@ def modify(data, signal, signal_data, string):
     prefix, msg = string.split("\t", 1)
     nick = weechat.info_get("irc_nick", server)
     #highcolor = weechat.config_color(weechat.config_get("weechat.color.chat_highlight"))
-    if nick in msg:
+    if weechat.string_has_highlight(msg, nick):
         weechat.string_remove_color(string, "")
         return "%s\t%s%s" % (prefix, weechat.color('chat_highlight'), msg)
     return string 
     
 
 
-weechat.hook_modifier("weechat_print", "modify", "")
+if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION,
+        SCRIPT_LICENSE, SCRIPT_DESC, "", ""):
+    weechat.hook_modifier("weechat_print", "modify", "")
