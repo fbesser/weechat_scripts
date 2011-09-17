@@ -22,6 +22,9 @@
 # 2011-09-05, F. Besser <fbesser@gmail.com>:
 #     version 0.1: script created
 #
+# Development is on:
+# https://github.com/fbesser/weechat_scripts
+#
 # (this script requires WeeChat 0.3.0 or newer)
 #
 
