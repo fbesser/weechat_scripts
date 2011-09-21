@@ -31,7 +31,7 @@
 
 SCRIPT_NAME = "allquery"
 SCRIPT_AUTHOR = "fbesser"
-SCRIPT_VERSION = "0.1"
+SCRIPT_VERSION = "0.2"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC = "Executes command on all irc query buffer"
 
@@ -84,7 +84,7 @@ def allquery_command_cb(data, buffer, args):
             ptr = weechat.infolist_pointer(infolist, "pointer")
             server = weechat.buffer_get_string(ptr, "localvar_server")
             query = weechat.buffer_get_string(ptr, "localvar_channel")
-            execute_command = re.sub(r'\$nick', query, command)
+            execute_command = re.sub(r'\b\$nick\b', query, command)
             if weechat.buffer_get_string(ptr, "localvar_type") == "private":
                 if exclude_nick is not None:
                     if not query in exclude_nick:
