@@ -96,7 +96,7 @@ fi
 make install
 
 if [ -f $WEECHAT_FIFO ];then
-    if [ $SAVE -eq 1 ]
+    if [ $SAVE -eq 1 ];then
         echo -e "*/save" > $WEECHAT_FIFO
     fi
     echo -e "*/upgrade" > $WEECHAT_FIFO
