@@ -20,6 +20,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# History:
+# DATE:
+#     version 0.2; added commandline arguments (-s, -v, -i)
+#                  added git clone ability if SRC_DIR not exists
+# 2011-09-08 
+#     version 0.1: script created
 #   
 #                                 ~~~\\://~~~
 #                                 ~~~\¸·¸/~~~
@@ -27,9 +34,10 @@
 #------------------------------oOOo---(¸)---oOOo-----------------------------
 
 #Options
-SRC_DIR=/home/floh/dev/weechattt
+SRC_DIR=/home/floh/dev/weechat
 BUILD_DIR=$SRC_DIR/build
 WEECHAT_CONFIG=/home/floh/.weechat
+WEECHAT_FIFO=$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{print $1;}')
 INSTALL_DIR=/home/floh/usr
 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
 VERBOSE=0
@@ -87,6 +95,10 @@ fi
 
 make install
 
-echo -e "*/upgrade" >$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{print $1;}')
-
+if [ -f $WEECHAT_FIFO ];then
+    if [ $SAVE -eq 1 ]
+        echo -e "*/save" > $WEECHAT_FIFO
+    fi
+    echo -e "*/upgrade" > $WEECHAT_FIFO
+fi
 exit 0
