@@ -31,7 +31,7 @@ SRC_DIR=/home/floh/dev/weechattt
 BUILD_DIR=$SRC_DIR/build
 WEECHAT_CONFIG=/home/floh/.weechat
 INSTALL_DIR=/home/floh/usr
-CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPREFIX=$INSTALL_DIR -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
+CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
 VERBOSE=0
 SAVE=0
 GIT_REPO="git://git.sv.gnu.org/weechat.git"
@@ -53,7 +53,7 @@ do
   esac
 done
 shift $((OPTIND-1))
-
+CMAKE_OPTIONS="-DPREFIX=$INSTALL_DIR $CMAKE_OPTIONS"
 if [ ! -d $SRC_DIR ]; then
     mkdir -p $SRC_DIR
     git clone $GIT_REPO $SRC_DIR
