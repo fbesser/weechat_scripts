@@ -55,7 +55,6 @@ done
 shift $((OPTIND-1))
 CMAKE_OPTIONS="-DPREFIX=$INSTALL_DIR $CMAKE_OPTIONS"
 if [ ! -d $SRC_DIR ]; then
-    mkdir -p $SRC_DIR
     git clone $GIT_REPO $SRC_DIR
     cd $SRC_DIR
 else
