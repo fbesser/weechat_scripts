@@ -23,7 +23,7 @@
 
 # History:
 # DATE:
-#     version 0.2; added commandline arguments (-s, -v, -i)
+#     version 0.2: added commandline arguments (-s, -v, -i)
 #                  added git clone ability if SRC_DIR not exists
 # 2011-09-08 
 #     version 0.1: script created
@@ -37,22 +37,24 @@
 SRC_DIR=/home/floh/dev/weechat
 BUILD_DIR=$SRC_DIR/build
 WEECHAT_CONFIG=/home/floh/.weechat
-WEECHAT_FIFO=$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{print $1;}')
 INSTALL_DIR=/home/floh/usr
+
 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
-VERBOSE=0
-SAVE=0
+
+VERBOSE=false
+SAVE=false
 GIT_REPO="git://git.sv.gnu.org/weechat.git"
+WEECHAT_FIFO=$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{print $1;}')
 #export PATH="/usr/lib/ccache/bin/:$PATH"
 
 # SCRIPT
 
 # Kommandozeilen Argumente auswerten
-while getopts ":vps" flag
+while getopts ":vsi:" flag
 do
   case $flag in
-    v) VERBOSE=1;;
-    s) SAVE=1;;
+    v) VERBOSE=true;;
+    s) SAVE=true;;
     i) INSTALL_DIR=$OPTARG;;
     \?) echo "Unbekannte Option: -$OPTARG. $0 -h für Hilfe"
         exit 1;;
@@ -74,7 +76,7 @@ else
     if [ "$GIT_COMMIT" = "$GIT_COMMIT_ACT" ]; then
         echo $GIT_STATUS
         git log --pretty=oneline -n 1
-        exit 0
+        #exit 0
     fi
 fi
 
@@ -95,7 +97,7 @@ fi
 
 make install
 if [ -w $WEECHAT_FIFO ];then
-    if [ $SAVE -eq 1 ];then
+    if  $SAVE ;then
         echo -e "*/save" > $WEECHAT_FIFO
     fi
     echo -e "*/upgrade" > $WEECHAT_FIFO
