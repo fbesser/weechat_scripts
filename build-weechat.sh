@@ -24,7 +24,7 @@
 # History:
 # DATE:
 #     version 0.2: added commandline arguments (-s, -v, -i)
-#                  added git clone ability if SRC_DIR not exists
+#                  added git clone if SRC_DIR not exists
 # 2011-09-08 
 #     version 0.1: script created
 #   
@@ -50,11 +50,12 @@ WEECHAT_FIFO=$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{
 # SCRIPT
 
 # Kommandozeilen Argumente auswerten
-while getopts ":vsi:" flag
+while getopts ":vwi:" flag
 do
-  case $flag in
+  case  $flag in
     v) VERBOSE=true;;
-    s) SAVE=true;;
+    w) SAVE=true;;
+    u) UPGRADE=true;;
     i) INSTALL_DIR=$OPTARG;;
     \?) echo "Unbekannte Option: -$OPTARG. $0 -h für Hilfe"
         exit 1;;
@@ -79,9 +80,9 @@ else
         #exit 0
     fi
 fi
-
-git log --pretty=oneline $GIT_COMMIT..$GIT_COMMIT_ACT
-
+if $VERBOSE ; then
+    git log --pretty=oneline $GIT_COMMIT..$GIT_COMMIT_ACT
+fi
 if [ ! -d $BUILD_DIR ]; then
   mkdir -p $BUILD_DIR
 fi
@@ -100,6 +101,8 @@ if [ -w $WEECHAT_FIFO ];then
     if  $SAVE ;then
         echo -e "*/save" > $WEECHAT_FIFO
     fi
-    echo -e "*/upgrade" > $WEECHAT_FIFO
+    if $UPGRADE ;then
+        echo -e "*/upgrade" > $WEECHAT_FIFO
+    fi
 fi
 exit 0
