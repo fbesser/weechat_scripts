@@ -20,6 +20,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Usage:
+# build-weechat [-v] [-w] [-u] [-f][-i <install dir>]
+#
+#               -v : make output verbode
+#               -w : write weechat config of running weechat before UPGRADE
+#               -u : upgrade running weechat after make install
+#               -f : force compilation, even if there is nothing to update
+# -i <install dir> : install weechat into <install dir>
+#
 
 # History:
 # DATE:
@@ -41,22 +52,35 @@ INSTALL_DIR=/home/floh/usr
 
 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
 
+FORCE=false
 VERBOSE=false
 SAVE=false
-GIT_REPO="git://git.sv.gnu.org/weechat.git"
-WEECHAT_FIFO=$WEECHAT_CONFIG/weechat_fifo_$(ps -e | grep weechat-curses | awk '{print $1;}')
-#export PATH="/usr/lib/ccache/bin/:$PATH"
 
+GIT_REPO="git://git.sv.gnu.org/weechat.git"
+WEECHAT_FIFO=($WEECHAT_CONFIG/weechat_fifo_*)
 # SCRIPT
 
-# Kommandozeilen Argumente auswerten
-while getopts ":vwi:" flag
+
+HELP="Usage:\n
+ $0 [-v] [-w] [-u] [-f] [-i <install dir>]\n
+\n
+               -v : make output verbode\n
+
+               -w : write weechat config of running weechat before UPGRADE\n
+               -u : upgrade running weechat after make install\n
+               -f : force compilation, even if there is nothing to update\n
+ -i <install dir> : install weechat into <install dir>\n"
+
+while getopts ":vwufhi:" flag
 do
   case  $flag in
     v) VERBOSE=true;;
     w) SAVE=true;;
     u) UPGRADE=true;;
     i) INSTALL_DIR=$OPTARG;;
+    f) FORCE=true;;
+    h) echo $HELP
+        exit 0;;
     \?) echo "Unbekannte Option: -$OPTARG. $0 -h für Hilfe"
         exit 1;;
     :) echo "Option: -$OPTARG verlangt ein Argument. $0 -h für Hilfe"
@@ -64,7 +88,9 @@ do
   esac
 done
 shift $((OPTIND-1))
+
 CMAKE_OPTIONS="-DPREFIX=$INSTALL_DIR $CMAKE_OPTIONS"
+
 if [ ! -d $SRC_DIR ]; then
     git clone $GIT_REPO $SRC_DIR
     cd $SRC_DIR
@@ -76,20 +102,26 @@ else
     GIT_COMMIT_ACT=$(git rev-list --max-count=1 HEAD)
     if [ "$GIT_COMMIT" = "$GIT_COMMIT_ACT" ]; then
         echo $GIT_STATUS
-        git log --pretty=oneline -n 1
-        #exit 0
+        if $VERBOSE ; then
+            git log --pretty=oneline -n 1
+        fi
+        if ! $FORCE ; then
+            exit 0
+        fi
     fi
 fi
+
 if $VERBOSE ; then
     git log --pretty=oneline $GIT_COMMIT..$GIT_COMMIT_ACT
 fi
+
 if [ ! -d $BUILD_DIR ]; then
   mkdir -p $BUILD_DIR
 fi
 
 cd build
 
-cmake .. $CMAKE_OPTIONS 
+cmake .. $CMAKE_OPTIONS || exit 1 
 make
 if [ $? -ne 0 ]; then
     echo "Fehler in make"
@@ -97,9 +129,10 @@ if [ $? -ne 0 ]; then
 fi
 
 make install
-if [ -w $WEECHAT_FIFO ];then
+if [ -e $WEECHAT_FIFO ];then
     if  $SAVE ;then
-        echo -e "*/save" > $WEECHAT_FIFO
+        echo -e "*/save" >$WEECHAT_FIFO
+
     fi
     if $UPGRADE ;then
         echo -e "*/upgrade" > $WEECHAT_FIFO
