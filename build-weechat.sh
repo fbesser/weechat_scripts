@@ -43,7 +43,6 @@
 #                                 ~~~\¸·¸/~~~
 #                                   @ 0 0 @
 #------------------------------oOOo---(¸)---oOOo-----------------------------
-
 #Options
 SRC_DIR=/home/floh/dev/weechat
 BUILD_DIR=$SRC_DIR/build
@@ -55,7 +54,7 @@ CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DPYTHON_EXECUTABLE=/usr/bin/python2 -DP
 FORCE=false
 VERBOSE=false
 SAVE=false
-
+UPGRADE=false
 GIT_REPO="git://git.sv.gnu.org/weechat.git"
 WEECHAT_FIFO=($WEECHAT_CONFIG/weechat_fifo_*)
 # SCRIPT
